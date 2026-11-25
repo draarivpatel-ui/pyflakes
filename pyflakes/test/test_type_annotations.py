@@ -634,6 +634,24 @@ class TestTypeAnnotations(TestCase):
             return None
         """, m.UndefinedName)
 
+    def test_annotated_type_typing_import_alias(self):
+        """an alias of Annotated still marks trailing arguments as metadata"""
+        self.flakes("""
+        from typing_extensions import Annotated as WithSchema
+
+        def f(x: WithSchema[int, 'hello']) -> None:
+            return None
+        """)
+
+    def test_annotated_type_typing_import_alias_missing_forward_type(self):
+        """the first argument of an aliased Annotated is still a type"""
+        self.flakes("""
+        from typing import Annotated as WithSchema
+
+        def f(x: WithSchema['integer']) -> None:
+            return None
+        """, m.UndefinedName)
+
     def test_literal_type_some_other_module(self):
         """err on the side of false-negatives for types named Literal"""
         self.flakes("""

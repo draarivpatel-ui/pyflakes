@@ -1343,7 +1343,10 @@ class Checker:
             self.handleNode(node.value, node)
             with self._enter_annotation(AnnotationState.NONE):
                 self.handleNode(node.slice, node)
-        elif _is_name_or_attr(node.value, 'Annotated'):
+        elif (
+                _is_name_or_attr(node.value, 'Annotated') or
+                _is_typing(node.value, 'Annotated', self.scopeStack)
+        ):
             self.handleNode(node.value, node)
 
             if isinstance(node.slice, ast.Tuple):
